@@ -1,0 +1,53 @@
+﻿@page "/courses/{id:int}"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<CoursesServices>
+<h3>Edit course info</h3>
+<EditForm Model="course" OnValidSubmit="EditCourse">
+    <label for="name">Name</label>
+    <InputText @bind-Value="course.Name" id="name" />
+    <br />
+    <label for="teacher">Teacher</label>
+    <InputSelect @bind-Value="course.TeacherId" id="teacher">
+        <option value="">Select...</option>
+        @foreach (var teacher in teachers)
+        {
+            <option value="@teacher.Id">@teacher.FullName</option>
+        }
+    </InputSelect>
+    <br />
+    <label for="maxGrade">MaxGrade</label>
+    <InputNumber @bind-Value="course.MaxGrade" id="maxGrade" />
+    <br />
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <button type="submit">Save</button>
+</EditForm>
+@code {
+    [Inject] NavigationManager navigationManager { get; set; } = null!;
+    [Parameter] public int id { get; set; }
+    private Course course = new Course();
+    private List<Teacher> teachers = new List<Teacher>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        teachers = await Service.GetTeachers();
+
+        if (id < 0)
+            navigationManager.NavigateTo("/courses");
+        if(id!=0){
+            course = await Service.GetCourse(id);
+        }
+    }
+
+    private async Task EditCourse()
+    {
+        if (id == 0)
+            await Service.AddCourse(course);
+        else
+            await Service.EditCourse(course);
+        navigationManager.NavigateTo("/courses");
+
+    }
+}

@@ -1,0 +1,75 @@
+﻿@page "/ratings/{id:int}"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<RatingsServices>
+<h3>Edit rating info</h3>
+<EditForm Model="rating" OnValidSubmit="EditRating">
+    <label for="grade">Grade</label>
+    <InputNumber @bind-Value="rating.Grade" id="grade" />
+    <br />
+    <label for="course">Course</label>
+    <InputSelect @bind-Value="rating.CourseId" id="course">
+        <option value="">Select...</option>
+        @foreach (var course in courses)
+        {
+            <option value="@course.Id">@course.Name</option>
+        }
+    </InputSelect>
+    <br />
+    <label for="student">Student</label>
+    <InputSelect @bind-Value="rating.StudentId" id="student">
+        <option value="">Select...</option>
+
+        @foreach (var student in students)
+        {
+            <option value="@student.Id">@student.FullName</option>
+        }
+    </InputSelect>
+    <br />
+    <label for="date">Date</label>
+    <InputSelect @bind-Value="rating.DateId" id="date">
+        <option value="">Select...</option>
+
+        @foreach (var date in dates)
+        {
+            <option value="@date.Id">@date.DateString</option>
+        }
+    </InputSelect>
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <br />
+
+    <button type="submit">Save</button>
+</EditForm>
+@code {
+    [Inject] NavigationManager navigationManager { get; set; } = null!;
+    [Parameter] public int id { get; set; }
+    private Rating rating = new Rating();
+    private List<Student> students = new List<Student>();
+    private List<Course> courses = new List<Course>();
+    private List<DateMonth> dates = new List<DateMonth>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        students = await Service.GetStudents();
+        courses = await Service.GeCourses();
+        dates = await Service.GetDateMonths();
+        if (id < 0)
+            navigationManager.NavigateTo("/ratings");
+        if (id != 0)
+        {
+            rating = await Service.GetRating(id);
+        }
+    }
+
+    private async Task EditRating()
+    {
+        if (id == 0)
+            await Service.AddRating(rating);
+        else
+            await Service.EditRating(rating);
+        navigationManager.NavigateTo("/ratings");
+
+    }
+}

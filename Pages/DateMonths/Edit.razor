@@ -1,0 +1,40 @@
+﻿@page "/dateMonths/{id:int}"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<DateMonthsServices>
+<h3>Edit dateMonth info</h3>
+<EditForm Model="dateMonth" OnValidSubmit="EditDateMonth">
+    <label for="year">Year</label>
+    <InputNumber @bind-Value="dateMonth.Year" id="year"/>
+    <br/>
+    <label for="month">Month</label>
+    <InputNumber @bind-Value="dateMonth.Month" id="month" />
+    <br/>
+    <DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<button type="submit">Save</button>
+</EditForm>
+
+@code {
+    [Inject] NavigationManager navigationManager { get; set; } = null!;
+    [Parameter] public int id { get; set; }
+    private DateMonth dateMonth = new DateMonth();
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id < 0)
+            navigationManager.NavigateTo("/dateMonths");
+        if(id != 0)
+            dateMonth = await Service.GetDateMonth(id);
+    }
+
+    private async Task EditDateMonth()
+    {
+        if (id == 0)
+            await Service.AddDateMonth(dateMonth);
+        else
+            await Service.EditDateMonth(dateMonth);
+        navigationManager.NavigateTo("/dateMonths");
+
+    }
+}

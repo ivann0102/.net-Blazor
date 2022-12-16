@@ -1,0 +1,39 @@
+﻿@page "/teachers"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<TeachersServices>
+<h3>Students</h3>
+<a href="/teachers/0">Create</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>ByFather</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var teacher in teachers){
+            <tr>
+                <td>@teacher.Name</td>
+                <td>@teacher.Surname</td>
+                <td>@teacher.ByFather</td>
+                <td>
+                    <a href="/teachers/@teacher.Id">Edit</a>
+                </td>
+                <td>
+                    <a href="/teachers/del/@teacher.Id" class="btn btn-danger">Delete</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+    List<Teacher> teachers = new List<Teacher>();
+    protected override async Task OnInitializedAsync(){
+        teachers = await Service.GetTeachers();
+    }
+}

@@ -1,0 +1,37 @@
+﻿@page "/dateMonths"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<DateMonthsServices>
+<h3>DateMonths</h3>
+<a href="/dateMonths/0">Create</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Month</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var dateMonth in dateMonths){
+            <tr>
+                <td>@dateMonth.Year</td>
+                <td>@dateMonth.Month</td>
+                <td>
+                    <a href="/dateMonths/@dateMonth.Id">Edit</a>
+                </td>
+                <td>
+                    <a href="/dateMonths/del/@dateMonth.Id" class="btn btn-danger">Delete</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+    List<DateMonth> dateMonths = new List<DateMonth>();
+    protected override async Task OnInitializedAsync(){
+        dateMonths = await Service.GetDateMonths();
+    }
+}

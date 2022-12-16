@@ -1,0 +1,48 @@
+﻿@page "/students/{id:int}"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<StudentsServices>
+<h3>Edit student info</h3>
+<EditForm Model="student" OnValidSubmit="EditStudent">
+    <label for="name">Name</label>
+    <InputText @bind-Value="student.Name" id="name"/>
+    <br/>
+    <label for="surname">Surname</label>
+    <InputText @bind-Value="student.Surname" id="surname" />
+    <br/>
+    <label for="byFather">ByFather</label>
+    <InputText @bind-Value="student.ByFather" id="byFather" />
+    <br/>
+    <label for="birthday">Birthday</label>
+    <InputDate @bind-Value="student.Birthday" id="birthday" />
+    <br/>
+    <label for="phone">Phone</label>
+    <InputText @bind-Value="student.Phone" id="phone" />
+    <br />
+    <DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<button type="submit">Save</button>
+</EditForm>
+@code {
+    [Inject] NavigationManager navigationManager { get; set; } = null!;
+    [Parameter] public int id { get; set; }
+    private Student student = new Student();
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id < 0)
+            navigationManager.NavigateTo("/students");
+        if(id!=0)
+            student = await Service.GetStudent(id);
+    }
+
+    private async Task EditStudent()
+    {
+        if (id == 0)
+            await Service.AddStudent(student);
+        else
+            await Service.EditStudent(student);
+        navigationManager.NavigateTo("/students");
+
+    }
+}

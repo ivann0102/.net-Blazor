@@ -1,0 +1,21 @@
+﻿@page "/ratings/del/{id:int}"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<RatingsServices>
+<h3>Delete</h3>
+<p>Deleting...</p>
+@code {
+    [Inject] NavigationManager navigationManager { get; set; } = null!;
+    [Parameter] public int id { get; set; }
+    private Rating rating = new Rating();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id > 0)
+        {
+            rating = await Service.GetRating(id);
+            await Service.DeleteRating(rating);
+        }
+        navigationManager.NavigateTo("/ratings");
+    }
+}

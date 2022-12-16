@@ -1,0 +1,48 @@
+﻿@page "/ratings"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<RatingsServices>
+<h3>Ratings</h3>
+<a href="/ratings/0">Create</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Course</th>
+            <th>Student</th>
+            <th>Date</th>
+            <th>Grade</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var rating in ratings){
+            <tr>
+                <td>@rating.Course.Name</td>
+                <td>@rating.Student.FullName</td>
+                <td>@rating.Date.DateString</td>
+                <td>@rating.Grade</td>
+                <td>
+                    <a href="/ratings/@rating.Id">Edit</a>
+                </td>
+                <td>
+                    <a href="/ratings/del/@rating.Id" class="btn btn-danger">Delete</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+    List<Rating> ratings = new List<Rating>();
+    private List<Course> courses = new List<Course>();
+    private List<DateMonth> dates = new List<DateMonth>();
+    private List<Student> students = new List<Student>();
+
+    protected override async Task OnInitializedAsync(){
+        students = await Service.GetStudents();
+        courses = await Service.GeCourses();
+        dates = await Service.GetDateMonths();
+        ratings = await Service.GetRatings();
+    }
+}

@@ -1,0 +1,41 @@
+﻿@page "/courses"
+@using StudentRatingBlazor.Models
+@using StudentRatingBlazor.Services
+@inherits OwningComponentBase<CoursesServices>
+<h3>Courses</h3>
+<a href="/courses/0">Create</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>MaxGrade</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var course in courses){
+            <tr>
+                <td>@course.Name</td>
+                <td>@course.Teacher.Name</td>
+                <td>@course.Teacher.Surname</td>
+                <td>@course.MaxGrade</td>
+                <td>
+                    <a href="/courses/@course.Id">Edit</a>
+                </td>
+                <td>
+                    <a href="/courses/del/@course.Id" class="btn btn-danger">Delete</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+    List<Course> courses = new List<Course>();
+    protected override async Task OnInitializedAsync(){
+        courses = await Service.GetCourses();
+    }
+}
